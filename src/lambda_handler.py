@@ -29,14 +29,20 @@ zenisms = [
     "To breakthrough your performance, you've got to breakthrough your psychology. -Jensen Siaw"
 ]
 
+
 def verify_signature(event, body):
+    """
+    :param event: the event that triggered the lambda function
+    :type event: dict
+    :param body: the value that was passed into the function
+    :type body: dict
+    """
     auth_sig = event['headers'].get('x-signature-ed25519')
     auth_ts  = event['headers'].get('x-signature-timestamp')
-    
-    
     message = auth_ts.encode() + body.encode()
     verify_key = VerifyKey(bytes.fromhex(PUBLIC_KEY))
     verify_key.verify(message, bytes.fromhex(auth_sig)) # raises an error if unequal
+
 
 def ping_pong(body: dict) -> bool:
     """
@@ -46,10 +52,14 @@ def ping_pong(body: dict) -> bool:
     if body.get("type") == 1:
         return True
     return False
-    
+
+
 def lambda_handler(event: dict, context) -> dict:
     """
-    Context is a LambdaContext object
+    :param event: the event that triggered the lambda function
+    :type event: dict
+    :param context: information about the invocation, function, and execution environment of the lambda
+    :type context: LambdaContext object
     """
     raw_body = event.get('body')
     json_body = json.loads(raw_body)
@@ -62,7 +72,6 @@ def lambda_handler(event: dict, context) -> dict:
         return PING_PONG
     
     elif json_body['data'].get('name', '') == 'zen':
-        print("Making zen")
 
         the_zen = zenisms[randint(0,len(zenisms)-1)]
         print(the_zen)
