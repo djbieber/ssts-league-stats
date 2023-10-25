@@ -5,6 +5,7 @@ import os
 from random import randint
 # from aws_lambda_context import LambdaContext
 # TODO: Add aws-lambda-context to the lambda layer so we can import this for typing
+# https://pypi.org/project/aws-lambda-context/
 # https://gist.github.com/wyllie/1a2d32a3282f817e1f2bebea95ab4c38
 from nacl.signing import VerifyKey
 
