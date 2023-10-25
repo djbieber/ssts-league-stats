@@ -3,7 +3,7 @@ name: Continuous deployment
 on:
   workflow_run:
     workflows: ['Continuous integration']
-    branches: [master]
+    branches: [main]
     types:
       - completed
 
