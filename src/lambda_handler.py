@@ -3,6 +3,9 @@
 import json
 import os
 from random import randint
+# from aws_lambda_context import LambdaContext
+# TODO: Add aws-lambda-context to the lambda layer so we can import this for typing
+# https://gist.github.com/wyllie/1a2d32a3282f817e1f2bebea95ab4c38
 from nacl.signing import VerifyKey
 
 PUBLIC_KEY = os.getenv('PUBLIC_KEY')
@@ -35,12 +38,19 @@ def verify_signature(event, body):
     verify_key = VerifyKey(bytes.fromhex(PUBLIC_KEY))
     verify_key.verify(message, bytes.fromhex(auth_sig)) # raises an error if unequal
 
-def ping_pong(body):
+def ping_pong(body: dict) -> bool:
+    """
+    If discord request type is 1, then this is
+    a ping to verify the handler for the slash command
+    """
     if body.get("type") == 1:
         return True
     return False
     
-def lambda_handler(event, context) -> Dict:
+def lambda_handler(event: dict, context) -> dict:
+    """
+    Context is a LambdaContext object
+    """
     raw_body = event.get('body')
     json_body = json.loads(raw_body)
 
