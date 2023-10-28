@@ -28,7 +28,7 @@ jobs:
         run: aws s3 cp ${{ github.run_id }}.zip s3://ssts-league-stats-lambda-function-api-bucket/${{ github.run_id }}.zip
 
       - name: Update lambda function code
-        run: aws lambda update-function-code --function-name ssts-league-stats-api --s3-bucket ssts-league-stats-api-bucket --s3-key ${{ github.run_id }}.zip
+        run: aws lambda update-function-code --function-name ssts-league-stats-api --s3-bucket ssts-league-stats-lambda-function-api-bucket --s3-key ${{ github.run_id }}.zip
 
       - name: Sleep for 5 seconds
         run: sleep 5s
