@@ -5,8 +5,8 @@
  */
 data "archive_file" "api_code_archive" {
   type        = "zip"
-  source_file = "${path.root}/../bootstrap"
-  output_path = "${path.root}/../bootstrap.zip"
+  source_file = "${path.root}/../function/lambda_handler.py"
+  output_path = "${path.root}/../function.zip"
 }
 
 // S3 bucket in which we're gonna release our versioned zip archives
@@ -21,7 +21,7 @@ resource "aws_s3_bucket" "api_bucket" {
  */
 resource "aws_s3_bucket_object" "api_code_archive" {
   bucket = aws_s3_bucket.api_bucket.id
-  key    = "bootstrap.zip"
+  key    = "function.zip"
   source = data.archive_file.api_code_archive.output_path
   etag   = filemd5(data.archive_file.api_code_archive.output_path)
 
@@ -34,7 +34,7 @@ resource "aws_s3_bucket_object" "api_code_archive" {
 }
 
 resource "aws_lambda_function" "api_lambda" {
-  function_name    = "example-api"
+  function_name    = "ssts-league-stats-api"
   role             = aws_iam_role.api_lambda_role.arn
   s3_bucket        = aws_s3_bucket.api_bucket.id
   s3_key           = aws_s3_bucket_object.api_code_archive.key
@@ -44,8 +44,8 @@ resource "aws_lambda_function" "api_lambda" {
 	 * depending on the programming language you use
    */
   architectures    = ["x86_64"]
-  runtime          = "python3.11"
-  handler          = "bootstrap"
+  runtime          = "python3.9"
+  handler          = "function"
   memory_size      = 128
   publish          = true
 
@@ -83,7 +83,7 @@ resource "aws_cloudwatch_log_group" "api_lambda_log_group" {
 }
 
 resource "aws_iam_role" "api_lambda_role" {
-  name = "example-lambda-role"
+  name = "ssts-league-stats-lambda-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -127,7 +127,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
  * to the Internet
  */
 resource "aws_apigatewayv2_api" "api_gateway" {
-  name          = "example-api-gateway"
+  name          = "ssts-league-stats-api-gateway"
   protocol_type = "HTTP"
   tags          = {}
 }
