@@ -22,7 +22,7 @@ jobs:
           aws-region: us-east-1
 
       - name: ZIP lambda function
-        run: zip ${{ github.run_id }}.zip function
+        run: zip ${{ github.run_id }}.zip function/lambda_handler.py
 
       - name: Upload to S3
         run: aws s3 cp ${{ github.run_id }}.zip s3://ssts-league-stats-lambda-function-api-bucket/${{ github.run_id }}.zip
