@@ -83,6 +83,15 @@ def lambda_handler(event: dict, context) -> dict:
             }
         }
     
+    elif json_body['data'].get('name', '') == "log_a_match":
+        return {
+            "type": RESPONSE_TYPES['MESSAGE_WITH_SOURCE'],
+            "data": {
+                "content": "loggging match"
+            }
+        }
+
+    
     else:
         # If there happens to be another bot command pointing at this endpoint, we'll handle it here
         # right now we only have one slash command registered though, which is handled above
